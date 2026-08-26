@@ -7,10 +7,17 @@ export default function ActivityCard({ activity, isDone, onToggleDone, onViewShe
   return (
     <div className="mb-[18px] flex overflow-hidden rounded-2xl border border-line bg-white shadow-md max-[640px]:flex-col">
       <button
-        onClick={() => onViewSheet(activity)}
+        onClick={() => activity.sheetImage && onViewSheet(activity)}
+        disabled={!activity.sheetImage}
         className="relative w-[190px] shrink-0 bg-sand-deep max-[640px]:h-[150px] max-[640px]:w-full"
       >
-        <img src={activity.sheetImage} alt={activity.sheetLabel} className="h-full w-full object-cover" />
+        {activity.sheetImage ? (
+          <img src={activity.sheetImage} alt={activity.sheetLabel} className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-linear-to-br from-sand-deep to-line px-3 text-center">
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-muted">Sheet pending</span>
+          </div>
+        )}
         <div className="absolute bottom-2 left-2 right-2 rounded-lg bg-forest-deep/85 px-1 py-1.5 text-center text-[11px] font-extrabold tracking-wide text-white">
           {activity.sheetLabel}
         </div>

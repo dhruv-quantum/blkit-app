@@ -5,10 +5,12 @@ activity videos, installable on a phone's home screen like a regular app —
 no App Store required.
 
 The real product lineup is built in: **Playgroup, Nursery, KG–I, KG–II,
-Phonics**, plus a **Flashcards** add-on. Right now only Nursery's
-**Animals** booklet has real content loaded (11 activities from the actual
-kit PDF, organized into 4 developmental quarters) — the rest show as
-locked, ready to be filled in.
+Phonics**, plus a **Flashcards** add-on. Right now only **Nursery** has
+real content loaded — but a lot of it: 8 booklets (Animals, Early
+Literacy, Early Numeracy, My Body & Feelings, Food & Nutrition, Nature &
+Science, Colors & Opposites, and Transportation) covering **96 activities**
+across 4 developmental quarters, pulled from the actual kit PDF. The other
+3 kits show as locked, ready to be filled in the same way.
 
 Accounts now come in three flavors:
 
@@ -319,18 +321,19 @@ Drop the image file into `public/images/sheets/`, then reference it as
 `/images/sheets/your-file-name.jpg` in `kit.js` (see the existing entries
 for the pattern).
 
-### Adding a new activity to the Animals booklet
+### Adding a new activity to an existing booklet
 
-Copy one of the objects inside the Animals booklet's `activities` array
-(look for `ANIMALS_BOOKLET` in `kit.js`) and adjust its fields:
+Copy one of the objects inside a booklet's `activities` array in `kit.js`
+(e.g. `ANIMALS_BOOKLET`, `FOOD_BOOKLET`, `LITERACY_BOOKLET`...) and adjust
+its fields:
 
 ```js
 {
-  id: "unique-id",              // must be unique across all activities
+  id: "unique-id",              // must be unique across all activities in the kit
   title: "Activity Name",
   theme: "Wild Animals",        // just a label shown as a tag
   quarter: 2,                   // 1-4, which quarter it belongs to
-  sheetImage: "/images/sheets/your-file.jpg",
+  sheetImage: "/images/sheets/your-file.jpg",  // or null if not available yet
   sheetLabel: "Sheet 4 · Activity 12",
   focus: "What skill this builds",
   materials: ["Item one", "Item two"],
@@ -338,6 +341,11 @@ Copy one of the objects inside the Animals booklet's `activities` array
   videoUrl: null,                // or an embeddable URL once you have one
 }
 ```
+
+Setting `sheetImage: null` is fine — the app shows a "Sheet pending"
+placeholder instead of a broken image (this is already the case for the
+Rhymes, Seasons, and Shapes activities, whose illustrated pages haven't
+been extracted yet).
 
 ### Loading real content into another kit
 
@@ -428,11 +436,14 @@ npm test
 
 Natural next steps, roughly in order of how much they'd unlock:
 
-1. **Load a second booklet's real content** (Early Literacy, Early
-   Numeracy, or Social & Emotional) so Nursery stops being single-booklet.
-2. **Load a second kit's real content** (Playgroup, KG-I, KG-II, or
-   Phonics).
-3. **Add real activity videos** as they're produced.
+1. **Load a second kit's real content** (Playgroup, KG-I, KG-II, or
+   Phonics) using the same booklet/quarter structure now proven out in
+   Nursery.
+2. **Add real activity videos** as they're produced — every activity
+   already has a `videoUrl` field ready to receive one.
+3. **Load real sheet images** for the handful of activities still marked
+   "Sheet pending" (Rhymes, Seasons, and Shapes) once their illustrated
+   pages are available.
 4. **Move kit content behind Supabase + Row Level Security**, closing the
    content-security gap noted in section 7, once more paid kits have real
    content worth protecting.

@@ -127,8 +127,8 @@ describe("Parent flow inside a granted kit (Animals booklet)", () => {
     render(<App />);
     await waitFor(() => screen.getByText("Open kit"));
     fireEvent.click(screen.getByText("Open kit"));
-    await waitFor(() => screen.getByText("Open booklet"));
-    fireEvent.click(screen.getByText("Open booklet"));
+    await waitFor(() => screen.getAllByText("Open booklet").length > 0);
+    fireEvent.click(screen.getAllByText("Open booklet")[0]);
     await waitFor(() => screen.getByText("Find My Correct Part"));
   }
 
@@ -140,9 +140,9 @@ describe("Parent flow inside a granted kit (Animals booklet)", () => {
 
   it("marks an activity complete and persists it", async () => {
     await openAnimalsBooklet();
-    expect(screen.getByText("0 of 11 activities complete")).toBeInTheDocument();
+    expect(screen.getByText("0 of 16 activities complete")).toBeInTheDocument();
     fireEvent.click(screen.getAllByTitle("Mark complete")[0]);
-    await waitFor(() => expect(screen.getByText("1 of 11 activities complete")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("1 of 16 activities complete")).toBeInTheDocument());
   });
 
   it("opens the sheet modal with a real image", async () => {
