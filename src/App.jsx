@@ -1,16 +1,52 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
 import Library from "./pages/Library";
 import KitHome from "./pages/KitHome";
 import BookletView from "./pages/BookletView";
+import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Library />} />
-        <Route path="/kit/:kitId" element={<KitHome />} />
-        <Route path="/kit/:kitId/booklet/:bookletId" element={<BookletView />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Library />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/kit/:kitId"
+            element={
+              <ProtectedRoute>
+                <KitHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/kit/:kitId/booklet/:bookletId"
+            element={
+              <ProtectedRoute>
+                <BookletView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute roles={["admin", "staff"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

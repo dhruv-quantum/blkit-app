@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Environment variables — never commit secrets (Supabase service role key, etc.)
+.env
+.env.local
+.env.*.local
+
+# Vercel CLI local config
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

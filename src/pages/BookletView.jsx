@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import TopBar from "../components/TopBar";
 import BackButton from "../components/BackButton";
@@ -6,24 +6,44 @@ import ActivityCard from "../components/ActivityCard";
 import SheetModal from "../components/SheetModal";
 import VideoModal from "../components/VideoModal";
 import { useProgress } from "../hooks/useProgress";
-import { NURSERY_KIT, QUARTERS, getBookletById, activitiesForQuarter, quarterCounts } from "../data/kit";
+import { useKitAccess } from "../hooks/useKitAccess";
+import { getKitById, getBookletById, QUARTERS, activitiesForQuarter, quarterCounts } from "../data/kit";
 
 export default function BookletView() {
-  const { bookletId } = useParams();
+  const { kitId, bookletId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { hasAccess, loading: accessLoading } = useKitAccess();
 
-  const booklet = getBookletById(bookletId);
+  const kit = getKitById(kitId);
+  const booklet = getBookletById(kit, bookletId);
+
   const initialQuarter = parseInt(searchParams.get("q"), 10) || 1;
   const [activeQuarter, setActiveQuarter] = useState(initialQuarter);
   const [sheetActivity, setSheetActivity] = useState(null);
   const [videoActivity, setVideoActivity] = useState(null);
 
-  const { done, toggle, reset } = useProgress(NURSERY_KIT.id, bookletId);
+  const { done, toggle, reset } = useProgress(kitId, bookletId);
+
+  useEffect(() => {
+    if (!accessLoading && (!kit || !hasAccess(kitId))) {
+      navigate("/", { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessLoading, kitId]);
 
   const counts = useMemo(() => (booklet ? quarterCounts(booklet) : {}), [booklet]);
   const quarter = QUARTERS.find((q) => q.id === activeQuarter) || QUARTERS[0];
   const activities = booklet ? activitiesForQuarter(booklet, quarter.id) : [];
+
+  if (accessLoading || !kit) {
+    return (
+      <div>
+        <TopBar />
+        <main className="mx-auto max-w-[1080px] px-5 py-10 text-[13.5px] text-muted">Loading…</main>
+      </div>
+    );
+  }
 
   if (!booklet) {
     return (
@@ -31,8 +51,8 @@ export default function BookletView() {
         <TopBar />
         <main className="mx-auto max-w-[1080px] px-5 py-10">
           <p className="text-muted">That booklet isn&apos;t available yet.</p>
-          <button className="mt-3 font-bold text-forest" onClick={() => navigate("/")}>
-            Back to Library
+          <button className="mt-3 font-bold text-forest" onClick={() => navigate(`/kit/${kitId}`)}>
+            Back to {kit.name}
           </button>
         </main>
       </div>
@@ -49,14 +69,14 @@ export default function BookletView() {
 
   return (
     <div>
-      <TopBar pill={`${NURSERY_KIT.name} · ${booklet.name}`} />
+      <TopBar pill={`${kit.name} · ${booklet.name}`} />
       <main className="mx-auto max-w-[1080px] px-5 pb-20 pt-7">
-        <BackButton label={NURSERY_KIT.name} onClick={() => navigate(`/kit/${NURSERY_KIT.id}`)} />
+        <BackButton label={kit.name} onClick={() => navigate(`/kit/${kit.id}`)} />
 
         <div className="mb-6 flex gap-[22px] overflow-hidden rounded-2xl bg-forest-deep text-white shadow-md max-[640px]:flex-col">
           <img src={booklet.cover} alt={booklet.name} className="h-[150px] w-full object-cover sm:h-auto sm:w-[220px]" />
           <div className="py-[22px] pr-[22px] max-[640px]:p-4">
-            <div className="eyebrow text-sun">{NURSERY_KIT.name} · Booklet</div>
+            <div className="eyebrow text-sun">{kit.name} · Booklet</div>
             <h2 className="mt-1.5 text-[26px]">{booklet.name}</h2>
             <p className="mt-1.5 text-[14.5px] text-white/78">{booklet.tagline}</p>
             <div className="mt-4 max-w-[360px]">

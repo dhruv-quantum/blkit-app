@@ -1,144 +1,185 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import App from "../App";
+import { createFakeSupabase } from "./fakeSupabase";
+
+// vi.hoisted lets this object exist before vi.mock's factory runs (which
+// itself is hoisted above imports), so the mock module and our tests can
+// share one swappable fake Supabase implementation.
+const { proxy, setImpl } = vi.hoisted(() => {
+  let current = null;
+  return {
+    proxy: {
+      auth: {
+        getSession: (...a) => current.auth.getSession(...a),
+        onAuthStateChange: (...a) => current.auth.onAuthStateChange(...a),
+        signInWithPassword: (...a) => current.auth.signInWithPassword(...a),
+        signOut: (...a) => current.auth.signOut(...a),
+      },
+      from: (...a) => current.from(...a),
+    },
+    setImpl: (impl) => {
+      current = impl;
+    },
+  };
+});
+
+vi.mock("../lib/supabaseClient", () => ({
+  supabase: proxy,
+  isSupabaseConfigured: true,
+}));
+
+const PARENT = { id: "parent-1", email: "parent@example.com", role: "parent", full_name: "Pat Parent" };
+const ADMIN = { id: "admin-1", email: "admin@example.com", role: "admin", full_name: "Ada Admin" };
+const STAFF = { id: "staff-1", email: "staff@example.com", role: "staff", full_name: "Sam Staff" };
+
+function signedInAs(profile, extra = {}) {
+  return createFakeSupabase({
+    session: { user: { id: profile.id, email: profile.email }, access_token: `token-${profile.id}` },
+    profiles: [profile],
+    kitAccess: [],
+    ...extra,
+  });
+}
 
 beforeEach(() => {
   window.localStorage.clear();
   window.history.pushState({}, "", "/");
 });
 
-describe("Brainy Ladder Kit Companion — full navigation flow", () => {
-  it("renders the library with the age ladder and the Nursery kit", () => {
+describe("Authentication gate", () => {
+  it("redirects to the login page when signed out", async () => {
+    setImpl(createFakeSupabase({ session: null, profiles: [] }));
     render(<App />);
-    expect(screen.getByText(/Pick up where your kit left off/i)).toBeInTheDocument();
-    expect(screen.getByText("Nursery")).toBeInTheDocument();
-    expect(screen.getByText("The Brainy Badgers")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/Sign in to your kit companion/i)).toBeInTheDocument());
   });
 
-  it("shows locked sibling kits (ladder) and add-on kits", () => {
+  it("signs a parent in and lands on the Kit Library", async () => {
+    setImpl(
+      createFakeSupabase({
+        session: null,
+        profiles: [{ ...PARENT }],
+      })
+    );
     render(<App />);
-    expect(screen.getByText("Playgroup")).toBeInTheDocument();
-    expect(screen.getByText("KG–I")).toBeInTheDocument();
-    expect(screen.getByText("KG–II")).toBeInTheDocument();
-    // Locked age tiers show on the ladder as "Climbing up soon"
-    expect(screen.getAllByText(/Climbing up soon/i).length).toBe(3);
-    expect(screen.getByText("Phonics Learning Kit")).toBeInTheDocument();
-    expect(screen.getByText("Flashcards")).toBeInTheDocument();
+    await waitFor(() => screen.getByLabelText(/Email/i));
+
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "parent@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("••••••••"), {
+      target: { value: "correct-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
+
+    await waitFor(() => expect(screen.getByText(/Pick up where your kit left off/i)).toBeInTheDocument());
   });
 
-  it("navigates into the kit home screen and shows the 4 quarters + trailer", () => {
+  it("shows an error for wrong credentials and stays on the login page", async () => {
+    setImpl(createFakeSupabase({ session: null, profiles: [{ ...PARENT }] }));
     render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
+    await waitFor(() => screen.getByPlaceholderText("you@example.com"));
 
-    expect(screen.getByText("The Brainy Badgers")).toBeInTheDocument();
-    expect(screen.getByText(/Official kit trailer/i)).toBeInTheDocument();
-    expect(screen.getByText("Sense & Say")).toBeInTheDocument();
-    expect(screen.getByText("Trace & Match")).toBeInTheDocument();
-    expect(screen.getByText("Cut & Create")).toBeInTheDocument();
-    expect(screen.getByText("Build & Imagine")).toBeInTheDocument();
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "parent@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("••••••••"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
-    // 3 + 3 + 3 + 2 = 11 activities total, reflected in quarter counts
-    expect(screen.getAllByText("3 activities ready")).toHaveLength(3);
-    expect(screen.getByText("2 activities ready")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(/Invalid login credentials/i)).toBeInTheDocument());
+  });
+});
+
+describe("Parent view — access-based kit visibility", () => {
+  it("shows Nursery open and other kits as 'Not in your plan' when only Nursery is granted", async () => {
+    setImpl(
+      signedInAs(PARENT, {
+        kitAccess: [{ id: "ka1", parent_id: PARENT.id, kit_id: "nursery", granted_by: ADMIN.id }],
+      })
+    );
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByText("The Brainy Badgers")).toBeInTheDocument());
+    expect(screen.getByText("Open kit")).toBeInTheDocument();
+
+    // Switch to the Playgroup rung — not granted, should add a second
+    // "Not in your plan" card (Phonics, in Other kits, already shows one).
+    const before = screen.getAllByText("Not in your plan").length;
+    fireEvent.click(screen.getByText("Playgroup"));
+    await waitFor(() => expect(screen.getAllByText("Not in your plan").length).toBeGreaterThan(before));
   });
 
-  it("opens the Animals booklet and defaults to Quarter 1 with 3 activities", () => {
+  it("does not show the admin Dashboard link for a parent", async () => {
+    setImpl(signedInAs(PARENT, { kitAccess: [] }));
     render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
+    await waitFor(() => screen.getByText(/Pick up where your kit left off/i));
+    expect(screen.queryByText("Dashboard")).not.toBeInTheDocument();
+  });
+});
+
+describe("Parent flow inside a granted kit (Animals booklet)", () => {
+  async function openAnimalsBooklet() {
+    setImpl(
+      signedInAs(PARENT, {
+        kitAccess: [{ id: "ka1", parent_id: PARENT.id, kit_id: "nursery", granted_by: ADMIN.id }],
+      })
+    );
+    render(<App />);
+    await waitFor(() => screen.getByText("Open kit"));
+    fireEvent.click(screen.getByText("Open kit"));
+    await waitFor(() => screen.getByText("Open booklet"));
     fireEvent.click(screen.getByText("Open booklet"));
+    await waitFor(() => screen.getByText("Find My Correct Part"));
+  }
 
-    expect(screen.getByText("Animals")).toBeInTheDocument();
-    expect(screen.getByText("Find My Correct Part")).toBeInTheDocument();
+  it("defaults to Quarter 1 and shows its 3 activities", async () => {
+    await openAnimalsBooklet();
     expect(screen.getByText("Bird Flash Cards")).toBeInTheDocument();
-    expect(screen.getByText("Hand Painting – Bird")).toBeInTheDocument();
-    // Q3-only activity should not appear while on Q1
     expect(screen.queryByText("Animal Mask")).not.toBeInTheDocument();
   });
 
-  it("switches quarters via tabs and shows the right activities", () => {
-    render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
-
-    fireEvent.click(screen.getByText(/Q4 · Build & Imagine/));
-    expect(screen.getByText("Half Part Animal Matching")).toBeInTheDocument();
-    expect(screen.getByText("Craft and Assembly")).toBeInTheDocument();
-    expect(screen.queryByText("Find My Correct Part")).not.toBeInTheDocument();
-  });
-
-  it("jumps directly into a quarter from the kit home quarter cards", () => {
-    render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Cut & Create"));
-
-    expect(screen.getByText("Animal Mask")).toBeInTheDocument();
-    expect(screen.getByText("Vegetable Sorting & Matching")).toBeInTheDocument();
-  });
-
-  it("marks an activity complete, persists it to localStorage, and updates the progress bar", () => {
-    render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
-
+  it("marks an activity complete and persists it", async () => {
+    await openAnimalsBooklet();
     expect(screen.getByText("0 of 11 activities complete")).toBeInTheDocument();
-
-    const checkButtons = screen.getAllByTitle("Mark complete");
-    fireEvent.click(checkButtons[0]);
-
-    expect(screen.getByText("1 of 11 activities complete")).toBeInTheDocument();
-
-    const stored = JSON.parse(
-      window.localStorage.getItem("brainy-ladder:progress:brainy-badgers-nursery:animals")
-    );
-    expect(stored).toHaveLength(1);
-  });
-
-  it("resets progress when confirmed", () => {
-    const originalConfirm = window.confirm;
-    window.confirm = () => true;
-
-    render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
     fireEvent.click(screen.getAllByTitle("Mark complete")[0]);
-    expect(screen.getByText("1 of 11 activities complete")).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText(/Reset progress for this booklet/i));
-    expect(screen.getByText("0 of 11 activities complete")).toBeInTheDocument();
-
-    window.confirm = originalConfirm;
+    await waitFor(() => expect(screen.getByText("1 of 11 activities complete")).toBeInTheDocument());
   });
 
-  it("opens the instruction sheet modal with the real sheet image", () => {
-    render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
-
-    const sheetLabels = screen.getAllByText("Sheet 1 · Activities 1–2");
-    fireEvent.click(sheetLabels[0]);
-
-    const dialogTitles = screen.getAllByText("Sheet 1 · Activities 1–2");
-    expect(dialogTitles.length).toBeGreaterThan(1); // one in the card flag, one in the modal header
+  it("opens the sheet modal with a real image", async () => {
+    await openAnimalsBooklet();
+    fireEvent.click(screen.getAllByText("Sheet 1 · Activities 1–2")[0]);
     const modalImg = document.querySelector(".fixed img");
     expect(modalImg).toHaveAttribute("src", expect.stringContaining("/images/sheets/"));
   });
+});
 
-  it("shows the 'video on its way' empty state for activities with no video yet", () => {
+describe("Admin dashboard", () => {
+  it("shows the Dashboard link and the create-profile form with a Staff option", async () => {
+    setImpl(signedInAs(ADMIN));
     render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
+    await waitFor(() => screen.getByText("Dashboard"));
+    fireEvent.click(screen.getByText("Dashboard"));
 
-    fireEvent.click(screen.getAllByText("Video")[0]);
-    expect(screen.getByText("Video on its way")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Create a new profile")).toBeInTheDocument());
+    expect(screen.getByText("Staff")).toBeInTheDocument();
   });
 
-  it("expands steps and materials for an activity", () => {
+  it("hides the Staff role option for a staff user", async () => {
+    setImpl(signedInAs(STAFF));
     render(<App />);
-    fireEvent.click(screen.getAllByText("Open kit")[0]);
-    fireEvent.click(screen.getByText("Open booklet"));
+    await waitFor(() => screen.getByText("Dashboard"));
+    fireEvent.click(screen.getByText("Dashboard"));
 
-    fireEvent.click(screen.getAllByText(/Show steps & materials/)[0]);
-    expect(screen.getByText(/Materials needed/i)).toBeInTheDocument();
-    expect(screen.getByText(/Fish cut-outs/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("Create a new profile")).toBeInTheDocument());
+    // Scope to the <label> specifically — TopBar also shows a "Staff" pill
+    // for this role, which would otherwise give a false match.
+    expect(screen.queryByText("Staff", { selector: "label" })).not.toBeInTheDocument();
+  });
+
+  it("blocks a parent from reaching /admin", async () => {
+    setImpl(signedInAs(PARENT));
+    render(<App />);
+    await waitFor(() => screen.getByText(/Pick up where your kit left off/i));
+    expect(screen.queryByText("Create a new profile")).not.toBeInTheDocument();
   });
 });

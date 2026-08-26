@@ -237,31 +237,68 @@ export const LOCKED_BOOKLETS = [
   { id: "social", name: "Social & Emotional" },
 ];
 
-export const NURSERY_KIT = {
-  id: "brainy-badgers-nursery",
-  name: "The Brainy Badgers",
-  ageGroup: "Nursery",
-  price: "₹2,999",
-  introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
-  blurb:
-    "A single year-long box of 350+ worksheets and activity sheets covering early literacy, numeracy, birds & animals, and social-emotional play — no screens required.",
-  stats: ["350+ activities", "4 skill areas", "Ages 1.5+"],
-  booklets: [ANIMALS_BOOKLET, ...LOCKED_BOOKLETS],
-};
-
-// Real sibling products from brainyladder.com/shop — shown as locked
-// placeholders since their sheets haven't been loaded into this app yet.
-export const AGE_GROUPS = [
-  { id: "playgroup", name: "Playgroup", kitName: "The Brain Train", unlocked: false },
-  { id: "nursery", name: "Nursery", kitName: "The Brainy Badgers", unlocked: true },
-  { id: "kg1", name: "KG–I", kitName: "The Rapid Learners", unlocked: false },
-  { id: "kg2", name: "KG–II", kitName: "The Clever Buds", unlocked: false },
+// ----------------------------------------------------------------------------
+// The 5 real kits. Each `id` here MUST match the `id` used in Supabase's
+// `kits` table (see supabase/schema.sql) — that's how a parent's granted
+// kit_access rows map back to content in this file. `contentReady: false`
+// means the kit exists as a real product but its activities haven't been
+// loaded into the app yet (distinct from a parent simply not having access
+// to it — see components/KitCard's two different locked states).
+// ----------------------------------------------------------------------------
+export const KITS = [
+  {
+    id: "playgroup",
+    name: "The Brain Train",
+    ageGroup: "Playgroup",
+    contentReady: false,
+    booklets: [],
+  },
+  {
+    id: "nursery",
+    name: "The Brainy Badgers",
+    ageGroup: "Nursery",
+    contentReady: true,
+    price: "₹2,999",
+    introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
+    blurb:
+      "A single year-long box of 350+ worksheets and activity sheets covering early literacy, numeracy, birds & animals, and social-emotional play — no screens required.",
+    stats: ["350+ activities", "4 skill areas", "Ages 1.5+"],
+    booklets: [ANIMALS_BOOKLET, ...LOCKED_BOOKLETS],
+  },
+  {
+    id: "kg1",
+    name: "The Rapid Learners",
+    ageGroup: "KG–I",
+    contentReady: false,
+    booklets: [],
+  },
+  {
+    id: "kg2",
+    name: "The Clever Buds",
+    ageGroup: "KG–II",
+    contentReady: false,
+    booklets: [],
+  },
+  {
+    id: "phonics",
+    name: "Phonics Learning Kit",
+    ageGroup: "All ages",
+    contentReady: false,
+    booklets: [],
+  },
 ];
 
-export const ADDON_KITS = ["Phonics Learning Kit", "Flashcards"];
+// The one add-on product — not tied to an age group, purchasable alongside
+// any kit.
+export const ADDONS = [{ id: "flashcards", name: "Flashcards" }];
 
-export function getBookletById(id) {
-  return NURSERY_KIT.booklets.find((b) => b.id === id && b.unlocked) || null;
+export function getKitById(id) {
+  return KITS.find((k) => k.id === id) || null;
+}
+
+export function getBookletById(kit, bookletId) {
+  if (!kit) return null;
+  return kit.booklets.find((b) => b.id === bookletId && b.unlocked) || null;
 }
 
 export function activitiesForQuarter(booklet, quarterId) {

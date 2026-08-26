@@ -4,10 +4,21 @@ A web app for browsing your Brainy Ladder kit's instruction sheets and
 activity videos, installable on a phone's home screen like a regular app —
 no App Store required.
 
-This is an early build. Right now it fully covers **The Brainy Badgers
-(Nursery)** kit's **Animals** booklet (11 real activities, pulled from the
-actual kit PDF), organized into 4 developmental quarters. Everything else —
-sibling kits, other booklets — is shown locked, ready to be filled in.
+The real product lineup is built in: **Playgroup, Nursery, KG–I, KG–II,
+Phonics**, plus a **Flashcards** add-on. Right now only Nursery's
+**Animals** booklet has real content loaded (11 activities from the actual
+kit PDF, organized into 4 developmental quarters) — the rest show as
+locked, ready to be filled in.
+
+Accounts now come in three flavors:
+
+- **Admin** — sees everything, creates parent *and* staff profiles.
+- **Staff** — creates and manages parent profiles (not other staff), grants
+  or revokes which kits a parent can see.
+- **Parent** — signs in and sees only the kit(s) they've been granted.
+
+There's no public sign-up page anywhere in the app — every account is
+created by an admin or staff member from the dashboard.
 
 ---
 
@@ -53,15 +64,85 @@ required just to run the app.
 
 ---
 
-## 3. Running it locally
+## 3. Setting up Supabase (accounts & kit access)
+
+The app needs a [Supabase](https://supabase.com) project to handle logins
+and to remember which parent can see which kit. Supabase's free tier is
+enough for this. You'll do this setup once.
+
+### 3.1 Create the project
+
+1. Sign up / sign in at [supabase.com](https://supabase.com).
+2. Click **New project**. Pick any name and a database password (save that
+   password somewhere — you likely won't need it day-to-day, but keep it).
+3. Wait a minute or two for it to finish provisioning.
+
+### 3.2 Run the schema
+
+1. In your new project, open **SQL Editor** (left sidebar) → **New query**.
+2. Open `supabase/schema.sql` from this project in a text editor, copy the
+   whole file, and paste it into the SQL Editor.
+3. Click **Run**. You should see "Success. No rows returned." This creates
+   the `profiles`, `kits`, and `kit_access` tables, seeds the 6 kit/add-on
+   rows, and sets up Row Level Security so parents can only ever see their
+   own data no matter what.
+
+### 3.3 Get your API keys
+
+Go to **Settings → API**. You'll need two values from here shortly:
+- **Project URL** (e.g. `https://abcdefgh.supabase.co`)
+- **anon public** key (a long string — safe to use in the browser app)
+- **service_role** key, further down the same page, marked secret — this
+  one grants full database access and must never end up in the browser.
+  Treat it like a password.
+
+### 3.4 Bootstrap your first admin
+
+Nobody can create anyone yet, because there's no admin to do the creating.
+This one-time step uses the Supabase dashboard directly instead of the app:
+
+1. **Authentication → Users → Add user** (top right). Enter your own email
+   and set a password. Leave "Auto Confirm User" checked.
+2. **Table Editor → profiles**. You should see one new row (the trigger in
+   `schema.sql` created it automatically) with `role` set to `parent`.
+3. Click that row, change `role` to `admin`, save.
+
+That's it — that email + password is now your admin login for the app.
+
+### 3.5 Configure environment variables
+
+1. In this project folder, copy `.env.local.example` to a new file named
+   `.env.local`.
+2. Fill in the three values:
+   ```
+   VITE_SUPABASE_URL=https://your-project-ref.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-public-key
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+   ```
+   `.env.local` is already gitignored — it will never get committed or
+   pushed to GitHub.
+
+Restart `npm run dev` if it was already running, then go to `/login` and
+sign in with the admin account you just bootstrapped.
+
+**A note on that service role key:** it's only ever read by
+`api/admin/create-user.js`, which runs on the server (never in a browser).
+Never rename that variable to start with `VITE_` — that prefix is what
+tells the build tool to bundle a value into client-side code, and doing
+that with this key would hand out full database access to anyone who
+opened their browser's developer console.
+
+---
+
+## 4. Running it locally
 
 ```
 npm run dev
 ```
 
 This starts a local server and prints a URL, typically
-`http://localhost:5173`. Open that in your browser — you should see the
-Kit Library screen. Changes you make to the code appear instantly without
+`http://localhost:5173`. Open that in your browser — you'll land on the
+login page. Changes you make to the code appear instantly without
 restarting anything.
 
 Press `Ctrl + C` in the terminal to stop the server.
@@ -84,9 +165,9 @@ you saw in the earlier prototype.
 
 ---
 
-## 4. Version control with GitHub
+## 5. Version control with GitHub
 
-This project is already set up as a git repository with one commit. Putting
+This project is already set up as a git repository with commits. Putting
 it on GitHub gives you a backup, a change history, and — usefully — lets
 hosting services auto-deploy every time you push, instead of manually
 dragging a folder in.
@@ -116,25 +197,63 @@ simple interface — open the project folder in it, and it walks you through
 publishing the repository and committing changes with buttons instead of
 commands.
 
-**Note:** this repo has no secrets or API keys in it (the app doesn't talk
-to any backend), so there's nothing sensitive to worry about even if you
-make the GitHub repository public.
+**Note:** your actual secrets (the Supabase service role key, etc.) live
+only in `.env.local`, which is gitignored and never gets committed — the
+repository itself has nothing sensitive in it, even if you make it public.
 
 ### Auto-deploying from GitHub
 
 Once your code is on GitHub, hosting is a one-time setup instead of a
-manual step every time:
+manual step every time.
 
-- **Netlify:** [app.netlify.com](https://app.netlify.com) → "Add new site"
-  → "Import an existing project" → pick your GitHub repo. Build command:
-  `npm run build`, publish directory: `dist`. Every future `git push`
-  auto-deploys.
-- **Vercel:** same idea at [vercel.com/new](https://vercel.com/new) — it
-  auto-detects the Vite settings.
+#### Vercel (recommended)
+
+1. Go to **[vercel.com/new](https://vercel.com/new)** and sign in (GitHub
+   login is easiest).
+2. Click **Import** next to your `brainy-ladder-app` repository.
+3. Vercel auto-detects it as a Vite project. Leave the build defaults:
+   - **Build command:** `npm run build`
+   - **Output directory:** `dist`
+4. Before deploying, open **Environment Variables** and add the same three
+   from your `.env.local`: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
+   and `SUPABASE_SERVICE_ROLE_KEY`. This step is easy to miss and the app
+   won't be able to log anyone in without it.
+5. Click **Deploy**. In about a minute you'll get a live URL like
+   `brainy-ladder-app.vercel.app`.
+
+This project already includes a `vercel.json` that tells Vercel to send
+unknown URLs (like `/kit/nursery/booklet/animals`) to the app itself
+instead of a 404 page, since the app decides what those routes mean
+internally. Real files — images, icons, the manifest — are still served
+directly and untouched.
+
+From now on, every `git push` to your `main` branch automatically
+redeploys the live site. Pushing to any other branch gets its own preview
+URL first, so you can check changes before they go live.
+
+**Prefer the command line?** From inside the project folder:
+```
+npx vercel        # deploys a preview, asks a few setup questions the first time
+npx vercel --prod  # deploys to your production URL
+```
+This works even before the project is on GitHub, though connecting GitHub
+(above) is what gives you auto-deploy on every push. You'll still need to
+add the same 3 environment variables in the Vercel dashboard either way.
+
+**Custom domain:** once deployed, Vercel's project settings has a
+"Domains" tab where you can point your own domain (e.g. `app.brainyladder
+.com`) at it — just follow the DNS instructions it gives you.
+
+#### Netlify
+
+Same idea, different dashboard: [app.netlify.com](https://app.netlify.com)
+→ "Add new site" → "Import an existing project" → pick your GitHub repo.
+Build command: `npm run build`, publish directory: `dist`. Add the same 3
+environment variables under Site settings → Environment variables.
 
 ---
 
-## 5. Putting it online without GitHub
+## 6. Putting it online without GitHub
 
 If you'd rather skip GitHub for now, you can still host it directly:
 
@@ -144,18 +263,55 @@ If you'd rather skip GitHub for now, you can still host it directly:
    the `dist` folder into the page. Netlify gives you a live URL in seconds.
 
 The tradeoff: you'd repeat this drag-and-drop manually after every change,
-since there's no repo for it to auto-deploy from.
+since there's no repo for it to auto-deploy from — and you'd still need to
+set the 3 environment variables in that site's settings for login to work.
 
 ---
 
-## 6. Adding content
+## 7. Managing accounts (the admin dashboard)
 
-Everything a booklet contains — its activities, quarters, materials,
+Sign in as an admin or staff member and a **Dashboard** link appears in the
+top bar (`/admin`).
+
+**Creating a profile:** fill in email, name, and role. For a parent
+profile, tick which kit(s) to grant. Submitting sends that person an email
+invite (via Supabase's built-in auth email) — they click the link, set
+their own password, and they're in. Nobody's password ever passes through
+this app or through you.
+
+**Adjusting a parent's kits:** the Parents table lists everyone, with a
+row of kit chips — click one to grant it, click again to revoke it. This
+is exactly how you'd handle "this family bought Phonics too" later,
+without creating a new account.
+
+**Staff vs. admin:** staff can do everything above for parents, but the
+"Staff" role option only appears for admins — a staff member can't create
+another staff account or see the staff/admin list, matching how the roles
+were scoped.
+
+**A known limitation worth knowing about:** kit *content* (the activity
+steps, images, etc.) currently ships inside the app's regular code bundle,
+not fetched from Supabase — so today's access control governs which kits
+someone can *navigate to and be shown* in the UI, not a hard technical wall
+against, say, someone reading the app's source files directly. This is a
+reasonable tradeoff while only one kit (Nursery/Animals) has real content;
+if that becomes a real concern once more paid content exists, the fix is
+moving kit content into Supabase behind the same Row Level Security rather
+than bundling it — worth a dedicated pass when you're ready for it.
+
+---
+
+## 8. Adding content
+
+Everything about kits and booklets — activities, quarters, materials,
 steps, and sheet images — lives in one file:
 
 ```
 src/data/kit.js
 ```
+
+The 5 kits live in the `KITS` array; the Flashcards add-on is in `ADDONS`.
+Only `nursery` has `contentReady: true` and a real `booklets` array today.
 
 ### Adding an image for a sheet
 
@@ -165,8 +321,8 @@ for the pattern).
 
 ### Adding a new activity to the Animals booklet
 
-Copy one of the objects inside `ANIMALS_BOOKLET.activities` in `kit.js` and
-adjust its fields:
+Copy one of the objects inside the Animals booklet's `activities` array
+(look for `ANIMALS_BOOKLET` in `kit.js`) and adjust its fields:
 
 ```js
 {
@@ -183,20 +339,13 @@ adjust its fields:
 }
 ```
 
-### Unlocking a new booklet (e.g. Early Literacy)
+### Loading real content into another kit
 
-In `kit.js`, find the booklet's entry in `LOCKED_BOOKLETS` and turn it into
-a full booklet object like `ANIMALS_BOOKLET` — give it `unlocked: true`, a
-`cover` image, and an `activities` array following the same shape above.
-It'll automatically appear as an open-able card on the kit home screen.
-
-### Unlocking a new kit (e.g. Playgroup, KG-I, KG-II)
-
-In `kit.js`, `AGE_GROUPS` controls the ladder on the Library screen. Right
-now only Nursery is `unlocked: true`. Adding a second kit properly (its own
-booklets, activities, progress tracking) means extending the data model a
-bit further than a single flag — happy to help with that step when you're
-ready to load real content for one of those.
+Find that kit's entry in the `KITS` array (e.g. `playgroup`, `kg1`,
+`phonics`), set `contentReady: true`, and give it a `booklets` array
+following the same shape as `ANIMALS_BOOKLET`. It'll automatically appear
+as a real, open-able kit once at least one parent has been granted access
+to it.
 
 ### Adding a real activity video
 
@@ -207,7 +356,7 @@ from the "coming soon" state to actually playing it.
 
 ---
 
-## 7. How progress is stored
+## 9. How progress is stored
 
 Marking an activity complete saves to the browser's local storage on that
 device — nothing leaves the phone or gets sent anywhere. That means:
@@ -215,42 +364,59 @@ device — nothing leaves the phone or gets sent anywhere. That means:
 - Progress is per-device. Dad's phone and Mum's phone won't show the same
   checkmarks unless it's the same browser.
 - Clearing browser data / reinstalling wipes progress.
-- There's no login and no account system yet.
+- Progress isn't tied to the Supabase account yet — accounts control
+  *which kits you can see*, not where your checkmarks are stored.
 
-If you later want progress to sync across a family's devices, that needs a
-small backend (or a service like Firebase/Supabase) plus a sign-in step —
-a bigger undertaking than this app currently covers, worth a dedicated
-conversation when you're ready for it.
+If you'd like progress to follow a parent's account across devices instead
+of staying local to one phone, that's a natural next step now that real
+accounts exist (a small `progress` table alongside `kit_access` would do
+it) — worth a dedicated pass when you're ready.
 
 ---
 
-## 8. Project structure
+## 10. Project structure
 
 ```
 brainy-ladder-app/
+├─ api/
+│  └─ admin/create-user.js  → the one server-side function (uses the secret
+│                              service role key to create new accounts)
+├─ supabase/
+│  └─ schema.sql            → run this once in Supabase's SQL Editor
 ├─ public/
-│  ├─ icons/            → app icons (home screen, browser tab)
-│  └─ images/sheets/     → the actual kit page images
+│  ├─ icons/                → app icons (home screen, browser tab)
+│  └─ images/sheets/        → the actual kit page images
 ├─ src/
-│  ├─ data/kit.js        → ALL content: kits, booklets, quarters, activities
-│  ├─ components/        → reusable UI pieces (cards, modals, icons...)
-│  ├─ pages/             → the 3 screens: Library, KitHome, BookletView
-│  ├─ hooks/useProgress.js → local-storage-backed completion tracking
-│  └─ utils/storage.js   → small localStorage helper
-├─ src/__tests__/        → automated tests covering the full click-through
-├─ vite.config.js        → build tool + PWA (installable app) config
+│  ├─ data/kit.js           → ALL content: kits, booklets, quarters, activities
+│  ├─ lib/supabaseClient.js → the Supabase client used in the browser
+│  ├─ contexts/AuthContext.jsx → tracks who's signed in and their role
+│  ├─ components/           → reusable UI pieces (cards, modals, icons...)
+│  ├─ pages/                → Library, KitHome, BookletView, LoginPage, AdminDashboard
+│  ├─ hooks/
+│  │  ├─ useProgress.js     → local-storage-backed completion tracking
+│  │  └─ useKitAccess.js    → resolves which kits the signed-in user can see
+│  └─ utils/storage.js      → small localStorage helper
+├─ src/__tests__/           → automated tests (app flow + fake Supabase)
+├─ vite.config.js           → build tool + PWA (installable app) config
+├─ .env.local.example       → template for your own .env.local
 └─ package.json
 ```
 
 ---
 
-## 9. Running the tests (optional)
+## 11. Running the tests (optional)
 
-There's an automated test that clicks through the entire app — opening the
-kit, switching quarters, marking activities done, opening both modals —
-and checks everything behaves correctly. You never need to run this, but
-if you (or a developer you bring on) change the code later, it's a quick
-way to check nothing broke:
+There are two automated test files:
+
+- `src/__tests__/app.test.jsx` — clicks through the entire app (login,
+  role-based kit visibility, opening a booklet, marking activities done,
+  both modals) against a fake in-memory Supabase client.
+- `api/admin/create-user.test.js` — checks the account-creation function's
+  authorization rules directly (rejects non-admins, staff can't create
+  staff, etc.) without touching a real database.
+
+You never need to run these, but if you (or a developer you bring on)
+change the code later, it's a quick way to check nothing broke:
 
 ```
 npm test
@@ -263,9 +429,12 @@ npm test
 Natural next steps, roughly in order of how much they'd unlock:
 
 1. **Load a second booklet's real content** (Early Literacy, Early
-   Numeracy, or Social & Emotional) so the Nursery kit stops being
-   single-booklet.
-2. **Add real activity videos** as they're produced.
-3. **Load a second kit** (Playgroup, KG-I, or KG-II) with its own booklets.
-4. **Accounts + cloud sync**, if progress needs to follow a family across
-   devices rather than staying local to one phone.
+   Numeracy, or Social & Emotional) so Nursery stops being single-booklet.
+2. **Load a second kit's real content** (Playgroup, KG-I, KG-II, or
+   Phonics).
+3. **Add real activity videos** as they're produced.
+4. **Move kit content behind Supabase + Row Level Security**, closing the
+   content-security gap noted in section 7, once more paid kits have real
+   content worth protecting.
+5. **Progress synced to the account** instead of local-only, so a parent's
+   checkmarks follow them across devices.

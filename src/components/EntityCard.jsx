@@ -1,8 +1,10 @@
 import { LockIcon, PlayIcon } from "./Icons";
 
 // A single card for something the person can open (a kit or a booklet), or a
-// locked placeholder for content that isn't loaded yet.
-export default function EntityCard({ title, meta, image, locked, onOpen, openLabel }) {
+// locked placeholder — either because the content isn't built yet
+// (`lockReason="Coming soon"`) or because this parent hasn't been granted
+// this kit (`lockReason="Not in your plan"`).
+export default function EntityCard({ title, meta, image, locked, lockReason = "Coming soon", onOpen, openLabel }) {
   if (locked) {
     return (
       <div className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white opacity-60 shadow-md">
@@ -13,7 +15,7 @@ export default function EntityCard({ title, meta, image, locked, onOpen, openLab
           <h3 className="text-[17px] font-semibold text-muted">{title}</h3>
           <div className="mt-1 text-[12.5px] font-bold text-muted">{meta}</div>
           <div className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-muted">
-            <LockIcon /> Coming soon
+            <LockIcon /> {lockReason}
           </div>
         </div>
       </div>
