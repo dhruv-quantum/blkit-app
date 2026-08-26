@@ -84,23 +84,71 @@ you saw in the earlier prototype.
 
 ---
 
-## 4. Putting it online (so it's not just on your Wi-Fi)
+## 4. Version control with GitHub
 
-For anyone outside your home network to open it, it needs to be hosted
-somewhere. The simplest free options:
+This project is already set up as a git repository with one commit. Putting
+it on GitHub gives you a backup, a change history, and — usefully — lets
+hosting services auto-deploy every time you push, instead of manually
+dragging a folder in.
+
+1. Go to **[github.com/new](https://github.com/new)**, give it a name (e.g.
+   `brainy-ladder-app`), and create it **empty** — don't check "Add a
+   README" or `.gitignore`, since this project already has both.
+2. GitHub will show you a remote URL, e.g.
+   `https://github.com/your-username/brainy-ladder-app.git`. Back in your
+   terminal, inside the project folder:
+   ```
+   git remote add origin https://github.com/your-username/brainy-ladder-app.git
+   git push -u origin main
+   ```
+3. Refresh the GitHub page — your code is now there.
+
+From then on, whenever you make changes:
+```
+git add -A
+git commit -m "describe what changed"
+git push
+```
+
+Prefer a visual tool over the command line? **[GitHub
+Desktop](https://desktop.github.com)** does all of the above through a
+simple interface — open the project folder in it, and it walks you through
+publishing the repository and committing changes with buttons instead of
+commands.
+
+**Note:** this repo has no secrets or API keys in it (the app doesn't talk
+to any backend), so there's nothing sensitive to worry about even if you
+make the GitHub repository public.
+
+### Auto-deploying from GitHub
+
+Once your code is on GitHub, hosting is a one-time setup instead of a
+manual step every time:
+
+- **Netlify:** [app.netlify.com](https://app.netlify.com) → "Add new site"
+  → "Import an existing project" → pick your GitHub repo. Build command:
+  `npm run build`, publish directory: `dist`. Every future `git push`
+  auto-deploys.
+- **Vercel:** same idea at [vercel.com/new](https://vercel.com/new) — it
+  auto-detects the Vite settings.
+
+---
+
+## 5. Putting it online without GitHub
+
+If you'd rather skip GitHub for now, you can still host it directly:
 
 1. Run `npm run build` — this creates a `dist/` folder with the finished,
    optimized app.
 2. Go to **[app.netlify.com/drop](https://app.netlify.com/drop)** and drag
    the `dist` folder into the page. Netlify gives you a live URL in seconds.
 
-(Vercel, Cloudflare Pages, and GitHub Pages all work similarly if you'd
-rather use one of those — any static hosting service is fine, since this
-app has no backend server to run.)
+The tradeoff: you'd repeat this drag-and-drop manually after every change,
+since there's no repo for it to auto-deploy from.
 
 ---
 
-## 5. Adding content
+## 6. Adding content
 
 Everything a booklet contains — its activities, quarters, materials,
 steps, and sheet images — lives in one file:
@@ -159,7 +207,7 @@ from the "coming soon" state to actually playing it.
 
 ---
 
-## 6. How progress is stored
+## 7. How progress is stored
 
 Marking an activity complete saves to the browser's local storage on that
 device — nothing leaves the phone or gets sent anywhere. That means:
@@ -176,7 +224,7 @@ conversation when you're ready for it.
 
 ---
 
-## 7. Project structure
+## 8. Project structure
 
 ```
 brainy-ladder-app/
@@ -196,7 +244,7 @@ brainy-ladder-app/
 
 ---
 
-## 8. Running the tests (optional)
+## 9. Running the tests (optional)
 
 There's an automated test that clicks through the entire app — opening the
 kit, switching quarters, marking activities done, opening both modals —
