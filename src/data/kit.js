@@ -2867,11 +2867,32 @@ export const PG_VEGETABLES_BOOKLET = {
 // ----------------------------------------------------------------------------
 export const KITS = [
   {
-    id: "playgroup",
+        id: "playgroup",
     name: "The Brain Train",
     ageGroup: "Playgroup",
-    contentReady: false,
-    booklets: [],
+    contentReady: true,
+    blurb:
+      "A year-long box of hands-on worksheets and craft activities spanning animals, body parts, colors, habits, community helpers, early literacy & numeracy, rhymes, shapes, and more - no screens required.",
+    stats: ["77 activities", "17 topics", "Ages 1+"],
+    booklets: [
+      PG_ANIMALS_BOOKLET,
+      PG_BODY_PARTS_BOOKLET,
+      PG_COLORS_BOOKLET,
+      PG_FESTIVAL_BOOKLET,
+      PG_FLOWERS_BOOKLET,
+      PG_FRUITS_BOOKLET,
+      PG_HABITS_BOOKLET,
+      PG_COMMUNITY_HELPERS_BOOKLET,
+      PG_LITERACY_BOOKLET,
+      PG_NUMERACY_BOOKLET,
+      PG_PUZZLES_BOOKLET,
+      PG_RHYMES_BOOKLET,
+      PG_SHAPES_BOOKLET,
+      PG_SORT_MATCH_BOOKLET,
+      PG_TRACING_CARDS_BOOKLET,
+      PG_TRANSPORTATION_BOOKLET,
+      PG_VEGETABLES_BOOKLET,
+    ],
   },
   {
     id: "nursery",
