@@ -25,7 +25,13 @@ export default function EntityCard({ title, meta, image, locked, lockReason = "C
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg">
       <button onClick={onOpen} className="block">
-        <img src={image} alt={title} className="aspect-[4/3] w-full bg-sand-deep object-cover" />
+        {image ? (
+          <img src={image} alt={title} className="aspect-[4/3] w-full bg-sand-deep object-cover" />
+        ) : (
+          <div className="flex aspect-[4/3] w-full items-center justify-center bg-linear-to-br from-sand-deep to-line text-center">
+            <span className="text-[11px] font-extrabold uppercase tracking-wide text-muted">Cover pending</span>
+          </div>
+        )}
       </button>
       <div className="px-4 pb-[18px] pt-3.5">
         <h3 className="text-[17px] font-semibold text-forest-deep">{title}</h3>

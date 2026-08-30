@@ -74,7 +74,13 @@ export default function BookletView() {
         <BackButton label={kit.name} onClick={() => navigate(`/kit/${kit.id}`)} />
 
         <div className="mb-6 flex gap-[22px] overflow-hidden rounded-2xl bg-forest-deep text-white shadow-md max-[640px]:flex-col">
-          <img src={booklet.cover} alt={booklet.name} className="h-[150px] w-full object-cover sm:h-auto sm:w-[220px]" />
+          {booklet.cover ? (
+            <img src={booklet.cover} alt={booklet.name} className="h-[150px] w-full object-cover sm:h-auto sm:w-[220px]" />
+          ) : (
+            <div className="flex h-[150px] w-full items-center justify-center bg-linear-to-br from-sand-deep to-line sm:h-auto sm:w-[220px]">
+              <span className="text-[11px] font-extrabold uppercase tracking-wide text-muted">Cover pending</span>
+            </div>
+          )}
           <div className="py-[22px] pr-[22px] max-[640px]:p-4">
             <div className="eyebrow text-sun">{kit.name} · Booklet</div>
             <h2 className="mt-1.5 text-[26px]">{booklet.name}</h2>
