@@ -35,7 +35,7 @@ export default function Library() {
           key={kit.id}
           title={kit.name}
           meta={`${kit.ageGroup}${kit.price ? " · " + kit.price : ""}`}
-          image={kit.booklets[0]?.cover}
+          image={kit.image ?? kit.booklets[0]?.cover}
           openLabel="Open kit"
           onOpen={() => navigate(`/kit/${kit.id}`)}
         />

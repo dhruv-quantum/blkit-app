@@ -8547,6 +8547,7 @@ export const KITS = [
     id: "nursery",
     name: "The Brainy Badgers",
     ageGroup: "Nursery",
+    image: "/images/nursery-kit.jpg",
     contentReady: true,
     price: "₹2,999",
     introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
