@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import Library from "./pages/Library";
 import KitHome from "./pages/KitHome";
 import BookletView from "./pages/BookletView";
+import QuarterView from "./pages/QuarterView";
 import AdminDashboard from "./pages/AdminDashboard";
 
 export default function App() {
@@ -26,6 +27,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <KitHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/kit/:kitId/quarter/:quarterId"
+            element={
+              <ProtectedRoute>
+                <QuarterView />
               </ProtectedRoute>
             }
           />

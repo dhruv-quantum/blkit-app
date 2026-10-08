@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import App from "../App";
 import { createFakeSupabase } from "./fakeSupabase";
+import { KITS } from "../data/kit";
 
 // vi.hoisted lets this object exist before vi.mock's factory runs (which
 // itself is hoisted above imports), so the mock module and our tests can
@@ -151,6 +152,76 @@ describe("Parent flow inside a granted kit (Animals booklet)", () => {
     fireEvent.click(screen.getAllByText("Sheet 1 · Activities 1–2")[0]);
     const modalImg = document.querySelector(".fixed img");
     expect(modalImg).toHaveAttribute("src", expect.stringContaining("/images/sheets/"));
+  });
+});
+
+describe("Quarter pages (quarter-first navigation)", () => {
+  const NURSERY = KITS.find((k) => k.id === "nursery");
+  const quarterTotal = (q) =>
+    NURSERY.booklets.reduce((n, b) => n + b.activities.filter((a) => a.quarter === q).length, 0);
+
+  async function openKitHome() {
+    setImpl(
+      signedInAs(PARENT, {
+        kitAccess: [{ id: "ka1", parent_id: PARENT.id, kit_id: "nursery", granted_by: ADMIN.id }],
+      })
+    );
+    render(<App />);
+    await waitFor(() => screen.getByText("Open kit"));
+    fireEvent.click(screen.getByText("Open kit"));
+    await waitFor(() => screen.getByText("Sense & Say"));
+  }
+
+  async function openQuarter(focusLabel, firstActivity) {
+    await openKitHome();
+    fireEvent.click(screen.getByText(focusLabel));
+    await waitFor(() => screen.getByText(firstActivity));
+  }
+
+  it("shows how many activities each quarter holds on the kit page", async () => {
+    await openKitHome();
+    expect(screen.getByText(`${quarterTotal(1)} activities ready`)).toBeInTheDocument();
+    expect(screen.getByText(`${quarterTotal(4)} activities ready`)).toBeInTheDocument();
+  });
+
+  it("opens Quarter 1 with activities from every booklet, under a quarter header (not a booklet header)", async () => {
+    await openQuarter("Sense & Say", "Bird Flash Cards");
+
+    // Activities from different booklets, all in Q1
+    expect(screen.getByText("Food Flashcards")).toBeInTheDocument();
+    expect(screen.getByText("Color Bingo")).toBeInTheDocument();
+    expect(screen.getByText("Transport Flash Cards")).toBeInTheDocument();
+    // A Q4 activity must not appear
+    expect(screen.queryByText("Animal Mask")).not.toBeInTheDocument();
+
+    // The page header is the quarter, not Animals
+    expect(screen.getByRole("heading", { level: 2, name: "Sense & Say" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2, name: "Animals" })).not.toBeInTheDocument();
+    expect(screen.getByText(`0 of ${quarterTotal(1)} activities complete`)).toBeInTheDocument();
+  });
+
+  it("switches quarters with the tabs", async () => {
+    await openQuarter("Sense & Say", "Bird Flash Cards");
+    fireEvent.click(screen.getByRole("button", { name: /Q4 · Build & Imagine/ }));
+    await waitFor(() => screen.getByText("Animal Mask"));
+    expect(screen.queryByText("Bird Flash Cards")).not.toBeInTheDocument();
+    expect(screen.getByText(`0 of ${quarterTotal(4)} activities complete`)).toBeInTheDocument();
+  });
+
+  it("saves ticks to the same place the booklet pages use", async () => {
+    await openQuarter("Sense & Say", "Bird Flash Cards");
+    fireEvent.click(screen.getAllByTitle("Mark complete")[0]);
+    await waitFor(() =>
+      expect(screen.getByText(`1 of ${quarterTotal(1)} activities complete`)).toBeInTheDocument()
+    );
+    const saved = JSON.parse(window.localStorage.getItem("brainy-ladder:progress:nursery:animals"));
+    expect(saved).toContain("b1");
+  });
+
+  it("links through to the whole booklet", async () => {
+    await openQuarter("Sense & Say", "Bird Flash Cards");
+    fireEvent.click(screen.getAllByText("See whole booklet →")[0]);
+    await waitFor(() => expect(screen.getByRole("heading", { level: 2, name: "Animals" })).toBeInTheDocument());
   });
 });
 

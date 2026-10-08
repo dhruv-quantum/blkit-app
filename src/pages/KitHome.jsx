@@ -5,6 +5,7 @@ import BackButton from "../components/BackButton";
 import EntityCard from "../components/EntityCard";
 import QuarterCard from "../components/QuarterCard";
 import { useKitAccess } from "../hooks/useKitAccess";
+import { useKitProgress } from "../hooks/useKitProgress";
 import { getKitById, QUARTERS } from "../data/kit";
 
 function quarterCountsForKit(kit) {
@@ -18,16 +19,14 @@ function quarterCountsForKit(kit) {
   return counts;
 }
 
-function firstBookletForQuarter(kit, quarterId) {
-  return kit.booklets.find((b) => b.activities && b.activities.some((a) => a.quarter === quarterId));
-}
-
 export default function KitHome() {
   const { kitId } = useParams();
   const navigate = useNavigate();
   const { hasAccess, loading: accessLoading } = useKitAccess();
 
   const kit = getKitById(kitId);
+  const bookletIds = (kit?.booklets ?? []).filter((b) => b.unlocked && b.activities).map((b) => b.id);
+  const { isDone } = useKitProgress(kitId, bookletIds);
 
   useEffect(() => {
     if (!accessLoading && (!kit || !hasAccess(kitId))) {
@@ -63,6 +62,12 @@ export default function KitHome() {
   }
 
   const counts = quarterCountsForKit(kit);
+  const doneCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  kit.booklets.forEach((b) => {
+    b.activities?.forEach((a) => {
+      if (isDone(b.id, a.id)) doneCounts[a.quarter] = (doneCounts[a.quarter] || 0) + 1;
+    });
+  });
 
   return (
     <div>
@@ -106,20 +111,18 @@ export default function KitHome() {
           imaginative work. Tap a quarter to jump straight in.
         </p>
         <div className="mb-7 grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3.5">
-          {QUARTERS.map((q) => {
-            const booklet = firstBookletForQuarter(kit, q.id);
-            return (
-              <QuarterCard
-                key={q.id}
-                quarter={q}
-                count={counts[q.id] || 0}
-                onClick={() => booklet && navigate(`/kit/${kit.id}/booklet/${booklet.id}?q=${q.id}`)}
-              />
-            );
-          })}
+          {QUARTERS.map((q) => (
+            <QuarterCard
+              key={q.id}
+              quarter={q}
+              count={counts[q.id] || 0}
+              done={doneCounts[q.id] || 0}
+              onClick={() => navigate(`/kit/${kit.id}/quarter/${q.id}`)}
+            />
+          ))}
         </div>
 
-        <div className="eyebrow mb-3 block">Booklets in this box</div>
+        <div className="eyebrow mb-3 block">Or browse by topic</div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4">
           {kit.booklets.map((b) =>
             b.unlocked ? (
