@@ -129,10 +129,11 @@ describe("Parent flow inside a granted kit (Animals booklet)", () => {
     fireEvent.click(screen.getByText("Open kit"));
     await waitFor(() => screen.getAllByText("Open booklet").length > 0);
     fireEvent.click(screen.getAllByText("Open booklet")[0]);
-    await waitFor(() => screen.getByText("Find My Correct Part"));
+    // Q1 is the default tab, so wait for a Q1 activity (Bird Flash Cards).
+    await waitFor(() => screen.getByText("Bird Flash Cards"));
   }
 
-  it("defaults to Quarter 1 and shows its 3 activities", async () => {
+  it("defaults to Quarter 1 and shows its 4 activities", async () => {
     await openAnimalsBooklet();
     expect(screen.getByText("Bird Flash Cards")).toBeInTheDocument();
     expect(screen.queryByText("Animal Mask")).not.toBeInTheDocument();
