@@ -15,7 +15,7 @@ export const QUARTERS = [
     focus: "Sense & Say",
     months: "Months 1–3",
     blurb:
-      "Sensory play and first words. Materials arrive pre-cut — your child's job is to notice, name, and match.",
+      "Looking, listening and naming. Flash cards, dice, rhymes and sensory play: your child's job is to notice, name and join in.",
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ export const QUARTERS = [
     focus: "Trace & Match",
     months: "Months 4–6",
     blurb:
-      "Guided fine-motor practice: tracing a path, or matching a concept like a missing part or an animal's home.",
+      "Hands get busy. Tracing, coloring, dabbing and simple matching build grip, focus and concentration.",
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ export const QUARTERS = [
     focus: "Cut & Create",
     months: "Months 7–9",
     blurb:
-      "Your child picks up the scissors (with supervision) — cutting, assembling, and linking recognition to role-play.",
+      "Thinking and making. Sorting by idea, ordering by size or sequence, gluing and putting simple puzzles together, with a grown-up handling the scissors.",
   },
   {
     id: 4,
@@ -39,7 +39,7 @@ export const QUARTERS = [
     focus: "Build & Imagine",
     months: "Months 10–12",
     blurb:
-      "Capstone activities that call for abstract thinking and multi-step creativity, building on a year of practice.",
+      "Capstone activities: multi-step crafts, sequencing and imaginative play, building on a year of practice.",
   },
 ];
 
@@ -8552,8 +8552,8 @@ export const KITS = [
     price: "₹2,999",
     introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
     blurb:
-      "A single year-long box of 350+ worksheets and activity sheets covering early literacy, numeracy, birds & animals, and social-emotional play — no screens required.",
-    stats: ["350+ activities", "4 skill areas", "Ages 1.5+"],
+      "A year-long box of worksheets and hands-on activity sheets across 8 booklets (animals, early literacy, early numeracy, my body & feelings, food & nutrition, nature & science, colors & opposites, and transportation), arranged in four quarters. No screens required.",
+    stats: ["96 activities", "8 booklets", "Ages 1.5+"],
     booklets: [
       ANIMALS_BOOKLET,
       LITERACY_BOOKLET,
