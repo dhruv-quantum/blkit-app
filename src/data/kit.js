@@ -8549,11 +8549,11 @@ export const KITS = [
     ageGroup: "Nursery",
     image: "/images/nursery-kit.jpg",
     contentReady: true,
-    price: "₹2,999",
+    // price: "₹2,999", // hidden for now; restore this line to show the price on the Nursery card
     introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
     blurb:
       "A year-long box of worksheets and hands-on activity sheets across 8 booklets (animals, early literacy, early numeracy, my body & feelings, food & nutrition, nature & science, colors & opposites, and transportation), arranged in four quarters. No screens required.",
-    stats: ["96 activities", "8 booklets", "Ages 1.5+"],
+    stats: ["500+ activities & study material", "96 guided activities in the app", "Ages 1.5+"],
     booklets: [
       ANIMALS_BOOKLET,
       LITERACY_BOOKLET,
@@ -8570,6 +8570,7 @@ export const KITS = [
     name: "The Rapid Learners",
     ageGroup: "KG–I",
     contentReady: true,
+    introVideo: "https://www.youtube.com/embed/q1AmHiloU6Q",
     blurb:
       "A year-long box of hands-on worksheets, crafts, rhymes, and stories spanning 22 topics - animals, body parts, literacy, numeracy, life skills, transportation, and more - no screens required.",
     stats: ["137 activities", "22 topics", "Ages 4+"],
@@ -8603,6 +8604,7 @@ export const KITS = [
     name: "The Clever Buds",
     ageGroup: "KG–II",
     contentReady: true,
+    introVideo: "https://www.youtube.com/embed/rQJOvBAPKQ4",
     blurb:
       "A year-long box of hands-on worksheets, crafts, rhymes, and stories spanning 23 topics - animals, world geography, money, advanced numeracy, life cycles, and more - no screens required.",
     stats: ["173 activities", "23 topics", "Ages 5+"],
