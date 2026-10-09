@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
-import { readJSON, writeJSON } from "../utils/storage";
+import { useAuth } from "../contexts/AuthContext";
+import { readProgress, writeProgress } from "../utils/progressStore";
 
-// Progress for a whole kit, across all of its booklets. It reads and writes
-// the SAME storage keys as useProgress ("progress:<kitId>:<bookletId>"), so a
-// tick made on a Quarter page shows up in the booklet view and vice versa.
-const keyFor = (kitId, bookletId) => `progress:${kitId}:${bookletId}`;
+// Progress for a whole kit, across all of its booklets, for the signed-in
+// account. It reads and writes the SAME storage as useProgress, so a tick made
+// on a Quarter page shows up in the booklet view and vice versa.
 
 export function useKitProgress(kitId, bookletIds = []) {
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
   const idsKey = bookletIds.join("|");
 
   const readAll = useCallback(() => {
     const map = {};
-    for (const id of idsKey ? idsKey.split("|") : []) map[id] = readJSON(keyFor(kitId, id), []);
+    for (const id of idsKey ? idsKey.split("|") : []) map[id] = readProgress(userId, kitId, id);
     return map;
-  }, [kitId, idsKey]);
+  }, [userId, kitId, idsKey]);
 
   const [byBooklet, setByBooklet] = useState(readAll);
 
@@ -30,11 +32,11 @@ export function useKitProgress(kitId, bookletIds = []) {
         const next = current.includes(activityId)
           ? current.filter((id) => id !== activityId)
           : [...current, activityId];
-        writeJSON(keyFor(kitId, bookletId), next);
+        writeProgress(userId, kitId, bookletId, next);
         return { ...prev, [bookletId]: next };
       });
     },
-    [kitId]
+    [userId, kitId]
   );
 
   // Un-tick a set of activities, given as [{ bookletId, activityId }].
@@ -45,12 +47,12 @@ export function useKitProgress(kitId, bookletIds = []) {
         for (const { bookletId } of pairs) {
           const drop = new Set(pairs.filter((p) => p.bookletId === bookletId).map((p) => p.activityId));
           next[bookletId] = (next[bookletId] || []).filter((id) => !drop.has(id));
-          writeJSON(keyFor(kitId, bookletId), next[bookletId]);
+          writeProgress(userId, kitId, bookletId, next[bookletId]);
         }
         return next;
       });
     },
-    [kitId]
+    [userId, kitId]
   );
 
   return { byBooklet, isDone, toggle, clearMany };

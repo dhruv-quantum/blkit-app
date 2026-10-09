@@ -1,10 +1,11 @@
 import { LockIcon, PlayIcon } from "./Icons";
+import ProgressBar from "./ProgressBar";
 
 // A single card for something the person can open (a kit or a booklet), or a
 // locked placeholder — either because the content isn't built yet
 // (`lockReason="Coming soon"`) or because this parent hasn't been granted
 // this kit (`lockReason="Not in your plan"`).
-export default function EntityCard({ title, meta, image, locked, lockReason = "Coming soon", onOpen, openLabel }) {
+export default function EntityCard({ title, meta, image, locked, lockReason = "Coming soon", onOpen, openLabel, progress }) {
   if (locked) {
     return (
       <div className="flex flex-col overflow-hidden rounded-2xl border border-line bg-white opacity-60 shadow-md">
@@ -36,6 +37,7 @@ export default function EntityCard({ title, meta, image, locked, lockReason = "C
       <div className="px-4 pb-[18px] pt-3.5">
         <h3 className="text-[17px] font-semibold text-forest-deep">{title}</h3>
         <div className="mt-1 text-[12.5px] font-bold text-muted">{meta}</div>
+        {progress && progress.total > 0 && <ProgressBar done={progress.done} total={progress.total} className="mt-2.5" />}
         <button
           onClick={onOpen}
           className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-brand-gradient px-4 py-2 text-[13px] font-extrabold text-white shadow-[0_3px_10px_rgba(232,101,74,0.28)] hover:brightness-105"

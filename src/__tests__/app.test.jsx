@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import App from "../App";
 import { createFakeSupabase } from "./fakeSupabase";
 import { KITS } from "../data/kit";
@@ -180,8 +180,8 @@ describe("Quarter pages (quarter-first navigation)", () => {
 
   it("shows how many activities each quarter holds on the kit page", async () => {
     await openKitHome();
-    expect(screen.getByText(`${quarterTotal(1)} activities ready`)).toBeInTheDocument();
-    expect(screen.getByText(`${quarterTotal(4)} activities ready`)).toBeInTheDocument();
+    expect(screen.getByText(`0 of ${quarterTotal(1)} done`)).toBeInTheDocument();
+    expect(screen.getByText(`0 of ${quarterTotal(4)} done`)).toBeInTheDocument();
   });
 
   it("opens Quarter 1 with activities from every booklet, under a quarter header (not a booklet header)", async () => {
@@ -214,8 +214,43 @@ describe("Quarter pages (quarter-first navigation)", () => {
     await waitFor(() =>
       expect(screen.getByText(`1 of ${quarterTotal(1)} activities complete`)).toBeInTheDocument()
     );
-    const saved = JSON.parse(window.localStorage.getItem("brainy-ladder:progress:nursery:animals"));
+    const saved = JSON.parse(window.localStorage.getItem(`brainy-ladder:progress:u:${PARENT.id}:nursery:animals`));
     expect(saved).toContain("b1");
+  });
+
+  const allTotal = () => [1, 2, 3, 4].reduce((n, q) => n + quarterTotal(q), 0);
+  const animalsTotal = NURSERY.booklets.find((b) => b.id === "animals").activities.length;
+
+  it("shows overall, per-quarter and per-topic progress, and updates after a tick", async () => {
+    await openKitHome();
+    expect(screen.getByText(`0 of ${allTotal()} done`)).toBeInTheDocument();
+    const animalsCard = () => screen.getByText("Animals", { selector: "h3" }).closest("div").parentElement;
+    expect(within(animalsCard()).getByText(`0 of ${animalsTotal} done`)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText("Sense & Say"));
+    await waitFor(() => screen.getByText("Bird Flash Cards"));
+    fireEvent.click(screen.getAllByTitle("Mark complete")[0]);
+    await waitFor(() =>
+      expect(screen.getByText(`1 of ${quarterTotal(1)} activities complete`)).toBeInTheDocument()
+    );
+
+    fireEvent.click(screen.getByText("The Brainy Badgers"));
+    await waitFor(() => screen.getByText(`1 of ${allTotal()} done`));
+    expect(screen.getByText(`1 of ${quarterTotal(1)} done`)).toBeInTheDocument();
+    expect(within(animalsCard()).getByText(`1 of ${animalsTotal} done`)).toBeInTheDocument();
+  });
+
+  it("keeps progress separate for each account on the same device", async () => {
+    window.localStorage.setItem("brainy-ladder:progress:u:someone-else:nursery:animals", JSON.stringify(["b1", "b2"]));
+    await openKitHome();
+    expect(screen.getByText(`0 of ${allTotal()} done`)).toBeInTheDocument();
+  });
+
+  it("adopts progress saved by older builds the first time an account opens the kit", async () => {
+    window.localStorage.setItem("brainy-ladder:progress:nursery:animals", JSON.stringify(["b1", "b2"]));
+    await openKitHome();
+    expect(screen.getByText(`2 of ${allTotal()} done`)).toBeInTheDocument();
+    expect(window.localStorage.getItem("brainy-ladder:progress:nursery:animals")).toBeNull();
   });
 
   it("links through to the whole booklet", async () => {

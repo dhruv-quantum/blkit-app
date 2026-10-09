@@ -4,6 +4,7 @@ import TopBar from "../components/TopBar";
 import BackButton from "../components/BackButton";
 import EntityCard from "../components/EntityCard";
 import QuarterCard from "../components/QuarterCard";
+import ProgressBar from "../components/ProgressBar";
 import { useKitAccess } from "../hooks/useKitAccess";
 import { useKitProgress } from "../hooks/useKitProgress";
 import { getKitById, QUARTERS } from "../data/kit";
@@ -69,6 +70,10 @@ export default function KitHome() {
     });
   });
 
+  const totalActivities = Object.values(counts).reduce((n, c) => n + c, 0);
+  const totalDone = Object.values(doneCounts).reduce((n, c) => n + c, 0);
+  const bookletDone = (b) => (b.activities ?? []).filter((a) => isDone(b.id, a.id)).length;
+
   return (
     <div>
       <TopBar pill={`${kit.ageGroup} · ${kit.name}`} />
@@ -86,6 +91,10 @@ export default function KitHome() {
                   {s}
                 </span>
               ))}
+            </div>
+            <div className="mt-5 max-w-[420px]">
+              <div className="mb-1.5 text-[11.5px] font-extrabold uppercase tracking-wide text-white/70">Your progress</div>
+              <ProgressBar done={totalDone} total={totalActivities} tone="dark" />
             </div>
           </div>
           {kit.introVideo && (
@@ -130,6 +139,7 @@ export default function KitHome() {
                 key={b.id}
                 title={b.name}
                 meta={`${b.activities.length} activities across 4 quarters`}
+                progress={{ done: bookletDone(b), total: b.activities.length }}
                 image={b.cover}
                 openLabel="Open booklet"
                 onOpen={() => navigate(`/kit/${kit.id}/booklet/${b.id}`)}

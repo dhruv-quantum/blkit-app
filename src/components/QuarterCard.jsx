@@ -1,3 +1,5 @@
+import ProgressBar from "./ProgressBar";
+
 export default function QuarterCard({ quarter, count, done = 0, onClick }) {
   return (
     <button
@@ -14,8 +16,12 @@ export default function QuarterCard({ quarter, count, done = 0, onClick }) {
       </div>
       <h4 className="mb-1.5 text-[16px] font-semibold text-forest-deep">{quarter.focus}</h4>
       <p className="mb-3 text-[12.5px] leading-relaxed text-muted">{quarter.blurb}</p>
-      <div className="mt-auto text-[12px] font-extrabold text-coral-deep">
-        {count ? (done ? `${done} of ${count} done` : `${count} activities ready`) : "Landing soon"}
+      <div className="mt-auto">
+        {count ? (
+          <ProgressBar done={done} total={count} />
+        ) : (
+          <div className="text-[12px] font-extrabold text-coral-deep">Landing soon</div>
+        )}
       </div>
     </button>
   );

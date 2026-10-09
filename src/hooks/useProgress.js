@@ -1,15 +1,18 @@
 import { useEffect, useState, useCallback } from "react";
-import { readJSON, writeJSON } from "../utils/storage";
+import { useAuth } from "../contexts/AuthContext";
+import { readProgress, writeProgress } from "../utils/progressStore";
 
 // Tracks which activity ids are marked complete for a given booklet.
-// Storage key shape: "progress:<kitId>:<bookletId>" -> array of activity ids.
+// Saved per signed-in account (see utils/progressStore.js).
 export function useProgress(kitId, bookletId) {
-  const storageKey = `progress:${kitId}:${bookletId}`;
-  const [done, setDone] = useState(() => readJSON(storageKey, []));
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
+  const storageKey = `${userId}:${kitId}:${bookletId}`;
+  const [done, setDone] = useState(() => readProgress(userId, kitId, bookletId));
 
   // Re-read if the booklet changes (e.g. navigating between booklets).
   useEffect(() => {
-    setDone(readJSON(storageKey, []));
+    setDone(readProgress(userId, kitId, bookletId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
 
@@ -19,7 +22,7 @@ export function useProgress(kitId, bookletId) {
         const next = prev.includes(activityId)
           ? prev.filter((id) => id !== activityId)
           : [...prev, activityId];
-        writeJSON(storageKey, next);
+        writeProgress(userId, kitId, bookletId, next);
         return next;
       });
     },
@@ -28,7 +31,7 @@ export function useProgress(kitId, bookletId) {
 
   const reset = useCallback(() => {
     setDone([]);
-    writeJSON(storageKey, []);
+    writeProgress(userId, kitId, bookletId, []);
   }, [storageKey]);
 
   return { done, toggle, reset };
