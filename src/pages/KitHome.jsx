@@ -8,6 +8,7 @@ import ProgressBar from "../components/ProgressBar";
 import { useKitAccess } from "../hooks/useKitAccess";
 import { useKitProgress } from "../hooks/useKitProgress";
 import { getKitById, QUARTERS } from "../data/kit";
+import { getFlashcardGuide } from "../data/flashcards";
 
 function quarterCountsForKit(kit) {
   const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -131,6 +132,24 @@ export default function KitHome() {
           ))}
         </div>
 
+        {getFlashcardGuide(kit.id) && (
+          <button
+            onClick={() => navigate(`/kit/${kit.id}/flashcards`)}
+            className="mb-7 flex w-full items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 text-left shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+          >
+            <span>
+              <span className="eyebrow block">In your box</span>
+              <span className="mt-1 block text-[18px] font-semibold text-forest-deep">Flashcard Guide</span>
+              <span className="mt-1 block text-[13.5px] leading-relaxed text-muted">
+                Which deck to start with, and simple games to play with your physical flashcards.
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full bg-brand-gradient px-4 py-2 text-[13px] font-extrabold text-white">
+              Open guide
+            </span>
+          </button>
+        )}
+
         <div className="eyebrow mb-3 block">Or browse by topic</div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(210px,1fr))] gap-4">
           {kit.booklets.map((b) =>
@@ -138,7 +157,7 @@ export default function KitHome() {
               <EntityCard
                 key={b.id}
                 title={b.name}
-                meta={`${b.activities.length} activities across 4 quarters`}
+                meta={`${b.activities.length} activities`}
                 progress={{ done: bookletDone(b), total: b.activities.length }}
                 image={b.cover}
                 openLabel="Open booklet"

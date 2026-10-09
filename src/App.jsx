@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import Library from "./pages/Library";
 import KitHome from "./pages/KitHome";
 import BookletView from "./pages/BookletView";
+import FlashcardGuide from "./pages/FlashcardGuide";
 import QuarterView from "./pages/QuarterView";
 import AdminDashboard from "./pages/AdminDashboard";
 
@@ -27,6 +28,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <KitHome />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/kit/:kitId/flashcards"
+            element={
+              <ProtectedRoute>
+                <FlashcardGuide />
               </ProtectedRoute>
             }
           />

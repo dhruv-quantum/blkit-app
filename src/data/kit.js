@@ -645,6 +645,32 @@ export const SOCIAL_BOOKLET = {
         ],
         videoUrl: null,
       },
+    {
+        id: "ac1", title: "Actions We Do — Action Cards", theme: "Actions We Do", quarter: 1,
+        sheetImage: "/images/sheets/print-ac1.jpg", sheetLabel: "Printed pages 329–331",
+        focus: "Vocabulary, awareness & speaking skills",
+        materials: ["Action cards"],
+        steps: [
+          "Show one action card at a time and ask the child what the person in the picture is doing.",
+          "Say the action word clearly — praying, drinking, sleeping, running, crying, laughing.",
+          "Act it out together: fold your hands, pretend to sip, curl up to sleep, run on the spot.",
+          "Mix the cards and let the child pick one, name it and act it out for you.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "ac2", title: "Actions We Do — Spinner Game", theme: "Actions We Do", quarter: 2,
+        sheetImage: "/images/sheets/print-ac2.jpg", sheetLabel: "Printed page 332",
+        focus: "Observation, vocabulary & turn-taking",
+        materials: ["Spinner sheet", "Pencil and paper clip for the spinner"],
+        steps: [
+          "Place the spinner sheet flat on the table and look at the six pictures together.",
+          "Hold a pencil upright in the middle of the paper clip and flick the clip so it spins.",
+          "When it stops, ask the child to name the action it points to.",
+          "Let the child act it out, and clap together. Take turns spinning.",
+        ],
+        videoUrl: null,
+      },
   ],
 };
 
@@ -1027,6 +1053,19 @@ export const LITERACY_BOOKLET = {
         videoUrl: null,
       },
     {
+        id: "st6", title: "The Igloo", theme: "Stories", quarter: 2,
+        sheetImage: "/images/sheets/print-ig1.jpg", sheetLabel: "Printed page 356",
+        focus: "Language development & listening skills",
+        materials: ["Story resource"],
+        steps: [
+          "Show the picture and ask the child what they see — is it hot or cold there?",
+          "Read the story slowly, pointing to the igloo and the penguin.",
+          "Ask the child: what is the igloo made of? Is it warm inside?",
+          "Read it again and let the child fill in the last word of each line.",
+        ],
+        videoUrl: null,
+      },
+    {
         id: "rh4", title: "One Two Buckle My Shoe", theme: "Rhymes", quarter: 3,
         sheetImage: "/images/sheets/print-rh4.jpg", sheetLabel: "Printed page 132",
         focus: "Vocabulary & speaking skills",
@@ -1284,19 +1323,6 @@ export const NUMERACY_BOOKLET = {
           "Apply glue on the dotted lines.",
           "Together with the child, paste the straw cutouts onto the shape.",
           "Repeat with another shape.",
-        ],
-        videoUrl: null,
-      },
-    {
-        id: "pu1", title: "Puzzles \u2014 Cut and Join", theme: "Puzzles", quarter: 3,
-        sheetImage: "/images/sheets/puzzles-1.jpg", sheetLabel: "Sheet 1 \u00b7 Activity 1",
-        focus: "Memory, concentration & vocabulary building",
-        materials: ["Puzzle cut-outs", "Scissors"],
-        steps: [
-          "Show different puzzle picture cards to the child and speak their names.",
-          "Carefully cut along the perforated lines.",
-          "Mix the cutouts.",
-          "Let the child match the puzzle pieces, clapping every time they assemble one correctly.",
         ],
         videoUrl: null,
       },
@@ -8514,6 +8540,208 @@ export const K2_TRANSPORTATION_BOOKLET = {
 // loaded into the app yet (distinct from a parent simply not having access
 // to it — see components/KitCard's two different locked states).
 // ----------------------------------------------------------------------------
+export const PUZZLES_BOOKLET = {
+  id: "puzzles",
+  name: "Puzzles",
+  unlocked: true,
+  tagline: "Cut, mix and join — simple picture puzzles",
+  cover: "/images/sheets/puzzles-cover.jpg",
+  activities: [
+    {
+        id: "pzsh", title: "Shape Puzzles", theme: "Puzzles", quarter: 2,
+        sheetImage: "/images/sheets/print-pzsh.jpg", sheetLabel: "Printed pages 79–82",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the shape puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzco", title: "Colour Circle Puzzles", theme: "Puzzles", quarter: 3,
+        sheetImage: "/images/sheets/print-pzco.jpg", sheetLabel: "Printed pages 94–97",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the colour circle puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzan", title: "Animal Puzzles", theme: "Puzzles", quarter: 3,
+        sheetImage: "/images/sheets/print-pzan.jpg", sheetLabel: "Printed pages 66, 98–101",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the animal puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pztr", title: "Transport Puzzles", theme: "Puzzles", quarter: 3,
+        sheetImage: "/images/sheets/print-pztr.jpg", sheetLabel: "Printed pages 67–69",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the transport puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzfr", title: "Fruit Puzzles", theme: "Puzzles", quarter: 3,
+        sheetImage: "/images/sheets/print-pzfr.jpg", sheetLabel: "Printed pages 70, 71, 75, 104, 105",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the fruit puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzve", title: "Vegetable Puzzles", theme: "Puzzles", quarter: 4,
+        sheetImage: "/images/sheets/print-pzve.jpg", sheetLabel: "Printed pages 72–74, 102, 103",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the vegetable puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzfl", title: "Flower Puzzles", theme: "Puzzles", quarter: 4,
+        sheetImage: "/images/sheets/print-pzfl.jpg", sheetLabel: "Printed pages 76–78, 107, 108",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the flower puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pznu", title: "Number Puzzles 1–9", theme: "Puzzles", quarter: 4,
+        sheetImage: "/images/sheets/print-pznu.jpg", sheetLabel: "Printed pages 85–93",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the number puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzbo", title: "Boy & Girl Body Puzzles", theme: "Puzzles", quarter: 4,
+        sheetImage: "/images/sheets/print-pzbo.jpg", sheetLabel: "Printed pages 83, 84",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the body puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "pzsn", title: "Snowman Puzzle", theme: "Puzzles", quarter: 4,
+        sheetImage: "/images/sheets/print-pzsn.jpg", sheetLabel: "Printed page 106",
+        focus: "Memory, concentration & visual perception",
+        materials: ["Puzzle sheets", "Scissors"],
+        steps: [
+          "Show the snowman puzzle pictures to the child and say each name together.",
+          "A grown-up carefully cuts along the dotted lines.",
+          "Mix the pieces and lay them out on the table.",
+          "Let the child join the pieces back into the picture, clapping each time one is complete.",
+        ],
+        videoUrl: null,
+      },
+  ],
+};
+
+export const FESTIVALS_BOOKLET = {
+  id: "festivals",
+  name: "Festivals",
+  unlocked: true,
+  tagline: "Celebrating festivals with tearing, painting and decorating",
+  cover: "/images/sheets/festivals-cover.jpg",
+  activities: [
+    {
+        id: "fs1", title: "Paper Tearing — Diya", theme: "Festivals", quarter: 2,
+        sheetImage: "/images/sheets/print-fe1.jpg", sheetLabel: "Printed page 360",
+        focus: "Fine motor skills & festival awareness",
+        materials: ["Diya outline sheet", "Coloured paper", "Glue"],
+        steps: [
+          "Show the diya picture and talk about Diwali — the festival of lights.",
+          "Let the child tear coloured paper into small pieces.",
+          "Apply glue inside the flame and the diya, and let the child stick the pieces on.",
+          "Display the finished diya on the wall.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "fs2", title: "Blow Painting — Balloon", theme: "Festivals", quarter: 2,
+        sheetImage: "/images/sheets/print-fe3.jpg", sheetLabel: "Printed page 362",
+        focus: "Creativity & breath control",
+        materials: ["Balloon outline sheet", "Watery paint", "Straw", "Dropper or spoon"],
+        steps: [
+          "Place the balloon sheet on a tray and drop a little watery paint onto it.",
+          "Show the child how to blow gently through the straw to push the paint around.",
+          "Let the child try with other colours, making the balloon bright.",
+          "Leave it to dry and display it.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "fs3", title: "Wall Decoration Stickers", theme: "Festivals", quarter: 3,
+        sheetImage: "/images/sheets/print-fe4.jpg", sheetLabel: "Printed page 363",
+        focus: "Hand-eye coordination & festival awareness",
+        materials: ["Star and moon sheet", "Scissors", "Glue or tape", "Coloured paper"],
+        steps: [
+          "Show the stars and moon and talk about how we decorate at festival time.",
+          "A grown-up cuts out the stars and the moon.",
+          "Let the child choose where to stick them on a chart or wall.",
+          "Admire the decoration together.",
+        ],
+        videoUrl: null,
+      },
+    {
+        id: "fs4", title: "Tree Decoration", theme: "Festivals", quarter: 4,
+        sheetImage: "/images/sheets/print-fe2.jpg", sheetLabel: "Printed page 361",
+        focus: "Creativity & planning",
+        materials: ["Tree outline sheet", "Colours or stickers", "Glue", "Cotton or small paper pieces"],
+        steps: [
+          "Show the tree and talk about Christmas and how people decorate a tree.",
+          "Let the child colour or sticker the tree.",
+          "Add decorations — paper balls, cotton or glitter — with glue.",
+          "Let the child tell you about the finished tree.",
+        ],
+        videoUrl: null,
+      },
+  ],
+};
+
 export const KITS = [
   {
         id: "playgroup",
@@ -8522,7 +8750,7 @@ export const KITS = [
     contentReady: true,
     blurb:
       "A year-long box of hands-on worksheets and craft activities spanning animals, body parts, colors, habits, community helpers, early literacy & numeracy, rhymes, shapes, and more - no screens required.",
-    stats: ["77 activities", "17 topics", "Ages 1+"],
+    stats: ["77 activities", "17 topics", "Ages 1.5–2.5"],
     booklets: [
       PG_ANIMALS_BOOKLET,
       PG_BODY_PARTS_BOOKLET,
@@ -8552,8 +8780,8 @@ export const KITS = [
     // price: "₹2,999", // hidden for now; restore this line to show the price on the Nursery card
     introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
     blurb:
-      "A year-long box of worksheets and hands-on activity sheets across 8 booklets (animals, early literacy, early numeracy, my body & feelings, food & nutrition, nature & science, colors & opposites, and transportation), arranged in four quarters. No screens required.",
-    stats: ["500+ activities & study material", "96 guided activities in the app", "Ages 3+"],
+      "A year-long box of worksheets and hands-on activity sheets across 10 booklets (animals, early literacy, early numeracy, my body & feelings, food & nutrition, nature & science, colors & opposites, transportation, puzzles, and festivals), arranged in four quarters. No screens required.",
+    stats: ["500+ activities & study material", "112 guided activities in the app", "Ages 2.5–3.5"],
     booklets: [
       ANIMALS_BOOKLET,
       LITERACY_BOOKLET,
@@ -8563,6 +8791,8 @@ export const KITS = [
       NATURE_BOOKLET,
       COLORS_BOOKLET,
       TRANSPORTATION_BOOKLET,
+      PUZZLES_BOOKLET,
+      FESTIVALS_BOOKLET,
     ],
   },
   {
@@ -8573,7 +8803,7 @@ export const KITS = [
     introVideo: "https://www.youtube.com/embed/q1AmHiloU6Q",
     blurb:
       "A year-long box of hands-on worksheets, crafts, rhymes, and stories spanning 22 topics - animals, body parts, literacy, numeracy, life skills, transportation, and more - no screens required.",
-    stats: ["137 activities", "22 topics", "Ages 4+"],
+    stats: ["137 activities", "22 topics", "Ages 3.5–4.5"],
     booklets: [
       K1_ACTIONS_BOOKLET,
       K1_ANIMALS_BOOKLET,
@@ -8607,7 +8837,7 @@ export const KITS = [
     introVideo: "https://www.youtube.com/embed/rQJOvBAPKQ4",
     blurb:
       "A year-long box of hands-on worksheets, crafts, rhymes, and stories spanning 23 topics - animals, world geography, money, advanced numeracy, life cycles, and more - no screens required.",
-    stats: ["173 activities", "23 topics", "Ages 5+"],
+    stats: ["173 activities", "23 topics", "Ages 4.5–5.5"],
     booklets: [
       K2_ANIMALS_BOOKLET,
       K2_AROUND_WORLD_BOOKLET,
