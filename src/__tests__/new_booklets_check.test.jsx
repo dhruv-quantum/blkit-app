@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import App from "../App";
+import ActivityCard from "../components/ActivityCard";
 import { createFakeSupabase } from "./fakeSupabase";
 import { KITS } from "../data/kit";
 
@@ -58,30 +59,26 @@ describe("Data integrity sanity check", () => {
   });
 });
 
-describe("Text-only activities (no sheet image yet)", () => {
-  it("shows a 'Sheet pending' placeholder instead of a broken image", async () => {
-    setImpl(createFakeSupabase({
-      session: { user: { id: ADMIN.id, email: ADMIN.email }, access_token: "t" },
-      profiles: [ADMIN], kitAccess: [],
-    }));
-    render(<App />);
-    await waitFor(() => screen.getByText("Open kit"));
-    fireEvent.click(screen.getByText("Open kit"));
-    await waitFor(() => screen.getByText("Early Numeracy"));
+describe("Worksheet images", () => {
+  it("every Nursery activity has a sheet image", () => {
+    const nursery = KITS.find((k) => k.id === "nursery");
+    const missing = nursery.booklets.flatMap((b) =>
+      b.activities.filter((a) => !a.sheetImage).map((a) => `${b.id}/${a.id}`)
+    );
+    expect(missing).toEqual([]);
+  });
 
-    const heading = screen.getByText("Early Numeracy");
-    const card = heading.closest("div").parentElement;
-    fireEvent.click(within(card).getByText("Open booklet"));
-
-    // Shapes activities are text-only; jump to a quarter that includes one
-    await waitFor(() => screen.getByText(/Q3 · Cut & Create/));
-    fireEvent.click(screen.getByText(/Q3 · Cut & Create/));
-
-    await waitFor(() => expect(screen.getAllByText("Sheet pending").length).toBeGreaterThan(0));
-    // The pending thumbnail button should be disabled (not clickable to open a modal)
-    const pendingLabel = screen.getAllByText("Sheet pending")[0];
-    const pendingBtn = pendingLabel.closest("button");
+  it("shows a 'Sheet pending' placeholder (not a broken image) if an activity has no sheet", () => {
+    const activity = {
+      id: "x1", title: "Test activity", theme: "Test", quarter: 1,
+      sheetImage: null, sheetLabel: "", focus: "Testing", materials: [], steps: [], videoUrl: null,
+    };
+    render(
+      <ActivityCard activity={activity} isDone={false} onToggleDone={() => {}} onViewSheet={() => {}} onWatchVideo={() => {}} />
+    );
+    const pendingBtn = screen.getByText("Sheet pending").closest("button");
     expect(pendingBtn).toBeDisabled();
+    expect(document.querySelector("img")).toBeNull();
   });
 });
 

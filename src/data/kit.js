@@ -712,7 +712,7 @@ export const NATURE_BOOKLET = {
       },
     {
         id: "se2", title: "Earbud Dabbing \u2014 Seasons", theme: "Seasons", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-se2.jpg", sheetLabel: "Printed page 51",
         focus: "Fine motor skills",
         materials: ["Ear buds", "Poster colors"],
         steps: [
@@ -739,7 +739,7 @@ export const NATURE_BOOKLET = {
       },
     {
         id: "se1", title: "Seasons \u2014 Sort and Match", theme: "Seasons", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-se1.jpg", sheetLabel: "Printed pages 49–50",
         focus: "Hand-eye coordination, awareness & vocabulary",
         materials: ["Season stickers", "Resource cards"],
         steps: [
@@ -900,7 +900,7 @@ export const LITERACY_BOOKLET = {
   activities: [
     {
         id: "rh1", title: "Mary Had a Little Lamb", theme: "Rhymes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh1.jpg", sheetLabel: "Printed page 129",
         focus: "Awareness, vocabulary & speaking skills",
         materials: ["Rhyme cards"],
         steps: [
@@ -913,7 +913,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh8", title: "Old MacDonald Had a Farm", theme: "Rhymes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh8.jpg", sheetLabel: "Printed page 136",
         focus: "Awareness, vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -925,7 +925,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh6", title: "Hey Diddle Diddle", theme: "Rhymes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh6.jpg", sheetLabel: "Printed page 134",
         focus: "Vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -937,7 +937,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh9", title: "Puppy Dog Puppy Dog", theme: "Rhymes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh9.jpg", sheetLabel: "Printed page 137",
         focus: "Vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -962,7 +962,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh2", title: "Jack and Jill", theme: "Rhymes", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh2.jpg", sheetLabel: "Printed page 130",
         focus: "Vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -975,7 +975,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh7", title: "Humpty Dumpty", theme: "Rhymes", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh7.jpg", sheetLabel: "Printed page 135",
         focus: "Vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -988,7 +988,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh3", title: "Incy Wincy Spider", theme: "Rhymes", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh3.jpg", sheetLabel: "Printed page 131",
         focus: "Awareness, vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -1028,7 +1028,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh4", title: "One Two Buckle My Shoe", theme: "Rhymes", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh4.jpg", sheetLabel: "Printed page 132",
         focus: "Vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -1041,7 +1041,7 @@ export const LITERACY_BOOKLET = {
       },
     {
         id: "rh5", title: "Days of the Week", theme: "Rhymes", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-rh5.jpg", sheetLabel: "Printed page 133",
         focus: "Awareness, vocabulary & speaking skills",
         materials: ["Rhyme resource"],
         steps: [
@@ -1156,7 +1156,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh1", title: "Shapes Flash Cards", theme: "Shapes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh1.jpg", sheetLabel: "Printed pages 109–113",
         focus: "Shape recognition",
         materials: ["Resource cards"],
         steps: [
@@ -1169,7 +1169,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh5", title: "Shape Dice", theme: "Shapes", quarter: 1,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh5.jpg", sheetLabel: "Printed page 122",
         focus: "Visual recognition & social skills",
         materials: ["Dice cutout"],
         steps: [
@@ -1208,7 +1208,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh3", title: "Match the Correct Shape", theme: "Shapes", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh3.jpg", sheetLabel: "Printed page 117",
         focus: "Hand-eye coordination",
         materials: ["Crayons", "Resource card"],
         steps: [
@@ -1221,7 +1221,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh4", title: "Shape Tracing", theme: "Shapes", quarter: 2,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh4.jpg", sheetLabel: "Printed pages 118–121",
         focus: "Practicing shapes & pre-writing skills",
         materials: ["Resource cards"],
         steps: [
@@ -1248,7 +1248,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh2", title: "Shape Buddies", theme: "Shapes", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh2.jpg", sheetLabel: "Printed pages 114–116",
         focus: "Hand-eye coordination",
         materials: ["Glue", "Scissors"],
         steps: [
@@ -1262,7 +1262,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh8", title: "Shape Bracelet", theme: "Shapes", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh8.jpg", sheetLabel: "Printed pages 127–128",
         focus: "Fine motor skills & vocabulary building",
         materials: ["Shape cutouts", "Scissors"],
         steps: [
@@ -1275,7 +1275,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh6", title: "Paste the Shape with the Straw", theme: "Shapes", quarter: 3,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh6.jpg", sheetLabel: "Printed pages 123, 124, 126",
         focus: "Hand-eye coordination & fine motor skills",
         materials: ["Shapes resource", "Straws"],
         steps: [
@@ -1302,7 +1302,7 @@ export const NUMERACY_BOOKLET = {
       },
     {
         id: "sh7", title: "Paste the Shape with the Yarn", theme: "Shapes", quarter: 4,
-        sheetImage: null, sheetLabel: "Text-only \u2014 sheet pending",
+        sheetImage: "/images/sheets/print-sh7.jpg", sheetLabel: "Printed page 125",
         focus: "Hand-eye coordination & fine motor skills",
         materials: ["Shapes resource", "Yarn or wool"],
         steps: [
@@ -8553,7 +8553,7 @@ export const KITS = [
     introVideo: "https://www.youtube.com/embed/truXC-F4Wrk",
     blurb:
       "A year-long box of worksheets and hands-on activity sheets across 8 booklets (animals, early literacy, early numeracy, my body & feelings, food & nutrition, nature & science, colors & opposites, and transportation), arranged in four quarters. No screens required.",
-    stats: ["500+ activities & study material", "96 guided activities in the app", "Ages 1.5+"],
+    stats: ["500+ activities & study material", "96 guided activities in the app", "Ages 3+"],
     booklets: [
       ANIMALS_BOOKLET,
       LITERACY_BOOKLET,

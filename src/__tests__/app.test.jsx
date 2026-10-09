@@ -149,7 +149,7 @@ describe("Parent flow inside a granted kit (Animals booklet)", () => {
 
   it("opens the sheet modal with a real image", async () => {
     await openAnimalsBooklet();
-    fireEvent.click(screen.getAllByText("Sheet 1 · Activities 1–2")[0]);
+    fireEvent.click(screen.getAllByText("View worksheet")[0]);
     const modalImg = document.querySelector(".fixed img");
     expect(modalImg).toHaveAttribute("src", expect.stringContaining("/images/sheets/"));
   });

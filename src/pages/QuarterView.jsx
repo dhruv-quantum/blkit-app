@@ -85,9 +85,9 @@ export default function QuarterView() {
         <BackButton label={kit.name} onClick={() => navigate(`/kit/${kit.id}`)} />
 
         <div className="mb-6 flex gap-[22px] overflow-hidden rounded-2xl bg-forest-deep text-white shadow-md max-[640px]:flex-col">
-          <div className="flex h-[150px] w-full flex-col items-center justify-center bg-brand-gradient sm:h-auto sm:w-[220px]">
-            <span className="font-display text-[56px] font-semibold leading-none">Q{quarter.id}</span>
-            <span className="mt-1.5 text-[12px] font-extrabold uppercase tracking-[0.14em] text-white/90">
+          <div className="flex h-[84px] w-full items-center justify-center gap-3 bg-brand-gradient sm:h-auto sm:w-[220px] sm:flex-col sm:gap-0">
+            <span className="font-display text-[40px] font-semibold leading-none sm:text-[56px]">Q{quarter.id}</span>
+            <span className="text-[12px] font-extrabold uppercase tracking-[0.14em] text-white/90 sm:mt-1.5">
               {quarter.months}
             </span>
           </div>
@@ -108,14 +108,14 @@ export default function QuarterView() {
           </div>
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="-mx-5 mb-4 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
           {QUARTERS.map((q) => {
             const active = q.id === quarter.id;
             return (
               <button
                 key={q.id}
                 onClick={() => navigate(`/kit/${kit.id}/quarter/${q.id}`, { replace: true })}
-                className={`rounded-full border px-[18px] py-2 text-[13.5px] font-extrabold ${
+                className={`shrink-0 whitespace-nowrap rounded-full border px-[18px] py-2 text-[13.5px] font-extrabold ${
                   active
                     ? "border-forest-deep bg-forest-deep text-white"
                     : "border-line bg-white text-forest-deep"

@@ -2,7 +2,7 @@ export default function AgeLadder({ groups, activeId, onSelect }) {
   return (
     <div className="relative mb-8 flex overflow-hidden rounded-2xl bg-forest px-[22px] pt-[22px] shadow-lg">
       <div
-        className="pointer-events-none absolute bottom-[38px] left-[22px] right-[22px] h-1.5 rounded"
+        className="pointer-events-none absolute top-[36px] left-[22px] right-[22px] h-1.5 rounded"
         style={{
           backgroundImage:
             "repeating-linear-gradient(90deg, rgba(242,169,59,0.35) 0 18px, transparent 18px 30px)",
